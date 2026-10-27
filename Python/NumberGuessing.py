@@ -1,25 +1,30 @@
 import random as r
 
-random_number = r.randint(1,100)
-tries = 0 
-maximum_tries = 10
+target_number = r.randint(1,100)
+maximum_chances = 10
 
-print ("====================Number Guessing Game========================")
+def GuessNumber(maximum_chances,target_number):
+    guesses = []
+    while (maximum_chances > 0):
+        seen = False
+        choosenNumber = int(input("Please enter the number between 1 to 100:  "))
+        for i in range(len(guesses)):
+            if choosenNumber == guesses[i]:
+                seen = True
+        if seen == False:
+            guesses.append(choosenNumber)
+            maximum_chances -= 1
+        if target_number == choosenNumber:
+            return (f"Winner Winner Chicken Dinner. {choosenNumber} was right. Genius! 🥳")
+        elif seen == True:
+            print (f"{choosenNumber} is already choosen before. No chances gone ⚠️")
+            print (f"{maximum_chances} are remaining") 
+        elif target_number > choosenNumber:
+            print (f"Go Higher . {choosenNumber} is small. Choose wisely! noob. 🤣")
+            print (f"{maximum_chances} are remaining ❌")
+        elif target_number < choosenNumber:
+            print (f"Go Lower . {choosenNumber} is big. Choose wisely! noob 🤣")
+            print (f"{maximum_chances} are remaining ❌")
+    return (f"Game Over!. You lost noooooooob!.The number was {target_number} ❌")
 
-def guess_game(maximum_tries,tries,random_number):
-    while(tries < 10):
-        number = input("Please enter the number between 1 to 100: ")
-        if number == random_number:
-            return "You have guessed the number, You won 😍🙌"
-        elif number < random_number:
-            maximum_tries -=  1
-            print("Go Higher   -------",maximum_tries," chances are left")
-            tries += 1
-        elif number > random_number:
-            maximum_tries -=  1
-            print("Go Lower    -------",maximum_tries," chances are left")
-            tries += 1
-        else :
-            print("You lost, You loooooooooooooserrrrrrrrrrrrrrrrrr 🤙")
-
-print(guess_game(maximum_tries,tries,random_number))
+print(GuessNumber(maximum_chances,target_number))

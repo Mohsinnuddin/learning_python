@@ -1,46 +1,55 @@
 import streamlit as st
 import random as r
 
-st.title("Number Guessing Game")
 
-# 1. Initialize persistent session state variables
+st.title("Guess the number")
+
 if "target_number" not in st.session_state:
-    st.session_state.target_number = r.randint(1, 100)
-    st.session_state.max_chances = 10
-    st.session_state.game_over = False
+    st.session_state.target_number =  r.randint(1,100)
+    st.session_state.maximum_chances = 10
+    st.session_state.gameOver = False
+    st.session_state.guesses = []
 
-# 2. Display remaining attempts
-st.write(f"Remaining attempts: **{st.session_state.max_chances}**")
+choosenNumber = st.number_input(label = 'Please enter your Number',
+                                max_value= 100,
+                                step = 1 ,min_value = 1,
+                                disabled = st.session_state.gameOver)
 
-# 3. Input widget
-chosen_number = st.number_input(
-    label="Please Enter a number",
-    min_value=1,
-    max_value=100,
-    step=1,
-    disabled=st.session_state.game_over
-)
-st.caption("Number should be between 1 to 100")
 
-# 4. Evaluation logic triggered by the button
-if st.button("Submit Guess", disabled=st.session_state.game_over):
-    st.session_state.max_chances -= 1
+seen = False
 
-    if chosen_number == st.session_state.target_number:
-        st.success(f"🎉 Correct! The number was {st.session_state.target_number}!")
-        st.session_state.game_over = True
-    elif st.session_state.max_chances <= 0:
-        st.error(f"Game Over! You ran out of attempts. The number was {st.session_state.target_number}.")
-        st.session_state.game_over = True
-    elif chosen_number < st.session_state.target_number:
-        st.warning("Go Higher! The number you have chosen is too small.")
+for i in range(len(st.session_state.guesses)):
+    if st.session_state.guesses[i] == choosenNumber:
+        seen = True
+
+if st.button("Submit Guess",disabled=st.session_state.gameOver) and seen == False:
+    st.session_state.maximum_chances -= 1
+    st.session_state.guesses.append(choosenNumber)
+
+
+    if choosenNumber == st.session_state.target_number:
+        st.success(f"You Guessed it right.You are genius.The number was {choosenNumber}")
+        st.session_state.gameOver = True
+    elif st.session_state.maximum_chances <= 0:
+        st.error(f"Sorry! you lost.Gameover you nooooooob ❌. The number was {st.session_state.target_number}")
+        st.session_state.gameOver = True
+    elif choosenNumber > st.session_state.target_number:
+        st.warning(f"Go lower than {choosenNumber}. You noob 🤙")
+        st.warning(f"{st.session_state.maximum_chances} are remaining. Think wisely")
     else:
-        st.warning("Go Lower! The number you have chosen is too big.")
+        st.warning(f"Go Higher than {choosenNumber}. You noob 🤙")
+        st.warning(f"{st.session_state.maximum_chances} are remaining. Think wisely")
 
-# 5. Reset button to play again
-if st.session_state.game_over:
-    if st.button("Play Again"):
-        st.session_state.target_number = r.randint(1, 100)
-        st.session_state.max_chances = 10
-        st.session_state.game_over = False
+if seen == True:
+    st.warning(f"{choosenNumber} was already guessed."
+               "Please try different number and never repeat these silly mistakes."
+               f" {st.session_state.maximum_chances} are remaining. Think wisely")
+    seen = False
+
+if st.session_state.gameOver == True: 
+    if st.button("Play again"):
+        st.session_state.target_number =  r.randint(1,100)
+        st.session_state.maximum_chances = 10
+        st.session_state.gameOver = False
+        st.session_state.guesses = []
         st.rerun()
